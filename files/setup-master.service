@@ -1,0 +1,16 @@
+[Unit]
+Description=Setup Kubernetes Node
+#After=network.target
+#ConditionFirstBoot=true
+
+[Service]
+Type=oneshot
+
+ExecStartPre=sudo hostnamectl set-hostname master
+ExecStartPre=sudo chmod +x /opt/cluster-init.sh
+ExecStart=sudo /opt/cluster-init.sh master
+RemainAfterExit=true
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target
