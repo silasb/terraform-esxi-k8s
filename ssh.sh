@@ -9,6 +9,7 @@ function parse_input() {
 function return_token() {
   USER_AUTH=$(ssh -oStrictHostKeyChecking=no core@$HOST "/opt/bin/kubectl config view -ojson --raw | jq '.users[].user'")
   CLUSTER_AUTH=$(ssh -oStrictHostKeyChecking=no core@$HOST "/opt/bin/kubectl config view -ojson --raw | jq '{ \"certificate-authority-data\": .clusters[].cluster.\"certificate-authority-data\" }'")
+
   jq -n \
     --argjson user_auth "$USER_AUTH" \
     --argjson cluster_auth "$CLUSTER_AUTH" \

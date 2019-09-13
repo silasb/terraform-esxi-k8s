@@ -4,6 +4,8 @@ data "external" "user_auth" {
   query = {
     host = esxi_guest.kube-masters[0].ip_address
   }
+
+  depends_on = [esxi_guest.kube-masters]
 }
 
 data "template_file" "kubeconfig" {
