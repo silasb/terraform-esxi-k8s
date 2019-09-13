@@ -4,7 +4,11 @@ resource "esxi_guest" "kube-masters" {
 
   count = local.master_group_count
 
-  guest_startup_timeout = 120
+  guest_startup_timeout = lookup(
+    var.master_groups[count.index],
+    "esxi_timeout",
+    local.workers_group_defaults_defaults.esxi_timeout
+  )
 
   guestinfo = {
     "coreos.config.data.encoding" = "base64"
