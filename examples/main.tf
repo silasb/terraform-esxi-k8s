@@ -6,17 +6,33 @@ provider "esxi" {
   esxi_password = var.esxi_password
 }
 
+provider "random" {
+  version = "~> 2.1"
+}
+
+locals {
+  cluster_name = "example-k8s-${random_string.suffix.result}"
+}
+
+resource "random_string" "suffix" {
+  length  = 8
+  special = false
+}
+
 module "k8s" {
   source = "../"
 
-  cluster_name = "my-cluster"
+  cluster_name = local.cluster_name
+
+  key_file = file("~/.ssh/id_rsa.pub")
+  k8s_version = "1.16" # or "1.15"
 
   master_groups = [
     {
       memsize  = "2048"
       numvcpus = "2"
+      disk_store = "datastore0"
       ovf_source = "coreos_production_vmware_ova.ova"
-      key_file = file("~/.ssh/id_rsa.pub")
       virtual_network = "VM Network"
     }
   ]

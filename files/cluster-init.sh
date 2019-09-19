@@ -1,5 +1,8 @@
 #!/bin/bash
 
+role=$1
+version=$2
+
 CNI_VERSION="v0.7.5"
 mkdir -p /opt/cni/bin
 curl -L "https://github.com/containernetworking/plugins/releases/download/${CNI_VERSION}/cni-plugins-amd64-${CNI_VERSION}.tgz" | tar -C /opt/cni/bin -xz
@@ -8,7 +11,7 @@ CRICTL_VERSION="v1.12.0"
 mkdir -p /opt/bin
 curl -L "https://github.com/kubernetes-incubator/cri-tools/releases/download/${CRICTL_VERSION}/crictl-${CRICTL_VERSION}-linux-amd64.tar.gz" | tar -C /opt/bin -xz
 
-RELEASE="$(curl -sSL https://dl.k8s.io/release/stable.txt)"
+RELEASE="$(curl -sSL https://dl.k8s.io/release/stable-$version.txt)"
 
 mkdir -p /opt/bin
 cd /opt/bin
@@ -26,7 +29,6 @@ systemctl restart kubelet
 
 export PATH=$PATH:/opt/bin
 
-role=$1
 echo "DEBUG: role ${role}" 1>&2
 
 if [[ "$role" = "master" ]]; then

@@ -38,3 +38,15 @@ variable "kubeconfig_name" {
   type        = string
   default     = ""
 }
+
+variable "key_file" {
+  description = "Key file for all groups"
+  type = string
+  default = ""
+}
+
+variable "k8s_version" {
+  description = "Version of k8s, supports (1.14, 1.15, 1.16)"
+  type = string
+  default = "1.16"
+}

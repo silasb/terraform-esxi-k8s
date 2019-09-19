@@ -1,6 +1,18 @@
+module "user-data-master" {
+  source = "./user-data"
+
+  type = "master"
+  key_file = var.key_file
+
+  k8s_version = var.k8s_version
+}
+
 resource "esxi_guest" "kube-masters" {
   guest_name = "${var.cluster_name}-master"
-  disk_store = "datastore0"
+  disk_store = lookup(
+    var.master_groups[count.index],
+    "disk_store"
+  )
 
   count = local.master_group_count
 
@@ -12,7 +24,9 @@ resource "esxi_guest" "kube-masters" {
 
   guestinfo = {
     "coreos.config.data.encoding" = "base64"
-    "coreos.config.data" = base64encode(data.ignition_config.coreos[count.index].rendered)
+    "coreos.config.data" = base64encode(
+      module.user-data-master.user-data
+    )
   }
 
   # download the latest ova from coreos site
@@ -39,6 +53,10 @@ resource "esxi_guest" "kube-masters" {
       var.master_groups[count.index],
       "virtual_network"
     )
+  }
+
+  provisioner "local-exec" {
+    command = "while ! curl -k https://${self.ip_address}:6443; do sleep 10; done"
   }
 
   # connection {

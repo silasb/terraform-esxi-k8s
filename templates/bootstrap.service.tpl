@@ -6,9 +6,9 @@ ConditionFirstBoot=true
 [Service]
 Type=oneshot
 
-ExecStartPre=sudo hostnamectl set-hostname master
+ExecStartPre=sudo hostnamectl set-hostname ${type}
 ExecStartPre=sudo chmod +x /opt/cluster-init.sh
-ExecStart=sudo /opt/cluster-init.sh master
+ExecStart=sudo /opt/cluster-init.sh ${type} ${k8s_version}
 RemainAfterExit=true
 StandardOutput=journal
 
